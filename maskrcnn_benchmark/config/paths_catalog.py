@@ -7,6 +7,46 @@ import os
 class DatasetCatalog(object):
     DATA_DIR = "datasets"
     DATASETS = {
+        ## add bin class 
+        # train binary ytb and test, on 813splits, use COCODataset as loader, w gt
+        "youtubevos_train3k_meta_bin_coco": {
+            "img_dir": "datasets/youtubeVOS/train/JPEGImages/480p",
+            "ann_file": "data/ytb_vos/splits_813_3k_trainvaltest/meta_train3k_ytb_cocoformat_binary.json"
+        },
+        "youtubevos_val200_meta_bin_coco": {
+            "img_dir": "datasets/youtubeVOS/train/JPEGImages/480p",
+            "ann_file": "data/ytb_vos/splits_813_3k_trainvaltest/meta_val200_ytb_cocoformat_binary.json"
+        },
+
+        # used to extract prediction.pth for the data, use FOLDER_DATA as loader, wo gt
+        # read meta.json
+        "youtubevos_train3k_meta": {
+            "img_dir": "datasets/youtubeVOS/train/JPEGImages",
+            "ann_file": "data/ytb_vos/splits_813_3k_trainvaltest/meta_train3k.json"
+        },
+        "youtubevos_val200_meta": {
+            "img_dir": "datasets/youtubeVOS/train/JPEGImages",
+            "ann_file": "data/ytb_vos/splits_813_3k_trainvaltest/meta_val200.json"
+        },
+        "youtubevos_testdev_online_meta": {
+            "img_dir": "datasets/youtubeVOS/train_testdev_ot/JPEGImages/",
+            "ann_file": "datasets/youtubeVOS/train_testdev_ot/meta.json"
+        },
+        "youtubevos_testdev_meta": {
+            "img_dir": "datasets/youtubeVOS/val/JPEGImages/",
+            "ann_file": "data/ytb_vos/splits_813_3k_trainvaltest/meta_val474.json"
+        },
+
+        "bin_coco_2017_train": {
+            "img_dir": "coco/train2017",
+            "ann_file": "coco/annotations/instances_train2017_binary.json"
+        },
+        "bin_coco_2017_val": {
+            "img_dir": "coco/val2017",
+            "ann_file": "coco/annotations/instances_val2017_binary.json"
+        },
+
+        # the original path catalog 
         "coco_2017_train": {
             "img_dir": "coco/train2017",
             "ann_file": "coco/annotations/instances_train2017.json"
@@ -108,7 +148,31 @@ class DatasetCatalog(object):
 
     @staticmethod
     def get(name):
-        if "coco" in name:
+        if "youtubevos" in name:
+            if "meta_bin_coco" in name:
+                data_dir = DatasetCatalog.DATA_DIR
+                attrs = DatasetCatalog.DATASETS[name]
+                args = dict(
+                    root=os.path.join(data_dir, attrs["img_dir"]),
+                    ann_file=os.path.join(data_dir, attrs["ann_file"]),
+                    to_binary_class='bin' in name
+                )
+                return dict(
+                    factory="COCODataset",
+                    args=args,
+                )
+            else:
+                data_dir = DatasetCatalog.DATA_DIR
+                attrs = DatasetCatalog.DATASETS[name]
+                args = dict(
+                    db_root_dir=os.path.join(attrs["img_dir"]),
+                    ann_file=os.path.join(attrs["ann_file"])
+                )
+                return dict(
+                    factory="FOLDER_DATA",
+                    args=args,
+                )
+        elif "coco" in name:
             data_dir = DatasetCatalog.DATA_DIR
             attrs = DatasetCatalog.DATASETS[name]
             args = dict(

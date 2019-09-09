@@ -64,4 +64,15 @@ to install GCC 4.9 or higher, and try recompiling `maskrcnn-benchmark` again, af
 rm -rf build
 ```
 
+## torchvision/_C.cpython-36m-x86_64-linux-gnu.so: undefined symbol: _ZN3c1019UndefinedTensorImpl10_singletonE 
+refer to this [issue](https://github.com/facebookresearch/maskrcnn-benchmark/issues/839) 
+- happens with `torchvision: 0.3.0-py37_cu9.0.176_1 pytorch` 
+- `conda uninstall torchvision` if it is installed 
+- make sure checkout v0.2.0 for torchvision 
+- build `torchvision` by `python setup.py install `
+- rebuild `maskrcnn_benchmark`
 
+## RuntimeError: Not compiled with GPU support (nms at path/to/maskrcnn-benchmark/maskrcnn_benchmark/csrc/nms.h:22)
+- cuda version not compatible with the nvcc version 
+- run `nvcc --version` 
+- make sure it is the same as the cudatoolkit version
