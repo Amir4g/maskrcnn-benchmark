@@ -17,6 +17,10 @@ class DatasetCatalog(object):
             "img_dir": "datasets/youtubeVOS/train/JPEGImages/480p",
             "ann_file": "data/ytb_vos/splits_813_3k_trainvaltest/meta_val200_ytb_cocoformat_binary.json"
         },
+        "DAVIS2017_val": {
+            "img_dir": "datasets/DAVIS2017/DAVIS/JPEGImages/480p",
+            "ann_file": "datasets/DAVIS2017/DAVIS/val_meta.json"
+        },
 
         # used to extract prediction.pth for the data, use FOLDER_DATA as loader, wo gt
         # read meta.json
@@ -194,6 +198,17 @@ class DatasetCatalog(object):
                 factory="PascalVOCDataset",
                 args=args,
             )
+        elif "DAVIS" in name:
+                data_dir = DatasetCatalog.DATA_DIR
+                attrs = DatasetCatalog.DATASETS[name]
+                args = dict(
+                    db_root_dir=os.path.join(attrs["img_dir"]),
+                    ann_file=os.path.join(attrs["ann_file"])
+                )
+                return dict(
+                    factory="FOLDER_DATA",
+                    args=args,
+                )
         raise RuntimeError("Dataset not available: {}".format(name))
 
 
